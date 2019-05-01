@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/athombv/node-homey-lib/master/assets/app/schema.json",
+  "id": "com.electrolux.pure",
+  "version": "0.0.1",
+  "compatibility": ">=2.0.0",
+  "sdk": 2,
+  "name": {
+    "en": "Electrolux Pure"
+  },
+  "description": {
+    "en": "Adds support for Electrolux Pure air purifiers"
+  },
+  "category": [
+    "climate"
+  ],
+  "permissions": [],
+  "images": {
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png"
+  },
+  "author": {
+    "name": "Rickard L",
+    "email": "rickard@lyrenius.se"
+  }
+}
