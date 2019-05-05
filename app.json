@@ -10,16 +10,104 @@
   "description": {
     "en": "Adds support for Electrolux Pure air purifiers"
   },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "rickardly"
+      }
+    }
+  },
+  "brandColor": "#011e41",
   "category": [
-    "climate"
+    "climate",
+    "appliances"
   ],
   "permissions": [],
+  "author": {
+    "name": "Rickard",
+    "email": "athom@evolviq.com"
+  },
   "images": {
     "large": "/assets/images/large.png",
     "small": "/assets/images/small.png"
   },
-  "author": {
-    "name": "Rickard L",
-    "email": "rickard@lyrenius.se"
+  "drivers": [
+    {
+      "id": "electrolux-pure-a9",
+      "name": {
+        "en": "Electrolux Pure A9"
+      },
+      "class": "fan",
+      "capabilities": [
+        "measure_co2",
+        "measure_humidity",
+        "measure_pm25",
+        "measure_temperature",
+        "onoff",
+        "SMART_mode",
+        "FAN_speed"
+      ],
+      "images": {
+        "large": "/drivers/electrolux-pure-a9/assets/images/large.png",
+        "small": "/drivers/electrolux-pure-a9/assets/images/small.png"
+      },
+      "pair": [
+        {
+          "id": "login_electrolux_api",
+          "template": "login_credentials",
+          "navigation": {
+            "next": "list_pure_devices"
+          },
+          "options": {
+            "usernameLabel": {"en": "E-mail address"},
+            "passwordLabel": {"en": "App password"}
+          }
+        },
+        {
+          "id": "list_pure_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_pure_devices"
+          }
+        },
+        {
+          "id": "add_pure_devices",
+          "template": "add_devices"
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "SMART_mode" : {
+      "type": "enum",
+      "uiComponent": "picker",
+      "title": {
+        "en": "Mode"
+      },
+      "values": [
+        {
+          "id": "manual",
+          "title": {
+            "en": "Manual"
+          }
+        },
+        {
+          "id": "smart",
+          "title": {
+            "en": "Smart"
+          }
+        }
+      ]
+    },
+    "FAN_speed" : {
+      "type": "number",
+      "uiComponent": "slider",
+      "title": {
+        "en": "Fan speed"
+      },
+      "min": 0,
+      "max": 100,
+      "step": 10
+    }
   }
 }
