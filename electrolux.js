@@ -83,6 +83,14 @@ module.exports.ElectroluxDeltaApi = (function() {
         async getAppliances() {
             return await fetchApi("Appliances")
         }
+
+        async sendDeviceCommand(id, command) {
+            return await fetchApi("Appliances/" + id + "/Commands", {
+                method: "PUT",
+                body: JSON.stringify(command),
+                headers: { 'Content-Type': 'application/json' }
+            })
+        }
     }
 
     return ElectroluxDeltaApi

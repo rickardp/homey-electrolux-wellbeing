@@ -14,6 +14,63 @@ class ElectroluxPureDevice extends Homey.Device {
 		this.log('ElectroluxPureDevice has been inited')
 		setTimeout(this.onPoll.bind(this), 500)
 		setInterval(this.onPoll.bind(this), POLL_INTERVAL)
+		let dev = this
+		this.registerMultipleCapabilityListener([ 'onoff', 'FAN_speed', 'SMART_mode', 'IONIZER_onoff' ], ( valueObj, optsObj ) => {
+			this.log('Setting caps', valueObj);
+			return dev.setDeviceOpts.bind(dev)(valueObj)
+		  }, 500);
+	}
+
+	async setDeviceOpts(valueObj) {
+		const deviceId = this.getData().id
+		const client = this.getApi()
+		if(valueObj.onoff !== undefined) {
+			this.log("onoff: " + valueObj.onoff)
+			await client.sendDeviceCommand(deviceId, {
+				workMode: valueObj.onoff ? (valueObj.SMART_mode == "manual" ? "Manual" : "Auto") : "PowerOff"
+			})
+		}
+		if(valueObj.SMART_mode !== undefined && valueObj.onoff === undefined) {
+			this.log("SMART_mode: " + valueObj.SMART_mode)
+			await client.sendDeviceCommand(deviceId, {
+				workMode: valueObj.SMART_mode == "manual" ? "Manual" : "Auto"
+			})
+		}
+		if(valueObj.IONIZER_onoff !== undefined) {
+			this.log("IONIZER_onoff: " + valueObj.IONIZER_onoff)
+			await client.sendDeviceCommand(deviceId, {
+				ionizer: valueObj.IONIZER_onoff
+			})
+		}
+		if(valueObj.FAN_speed !== undefined) {
+			let fanSpeed = Math.floor(0.1 * valueObj.FAN_speed - 1)
+			if(fanSpeed < 1) fanSpeed = 1
+			if(valueObj.FAN_speed <= 0) {
+				await client.sendDeviceCommand(deviceId, {
+					workMode: "PowerOff"
+				})
+			} else {
+				this.log("FAN_speed: " + fanSpeed)
+				await client.sendDeviceCommand(deviceId, {
+					workMode: "Manual",
+					fanspeed: fanSpeed
+				})
+			}
+		}
+		setTimeout(this.onPoll.bind(this), 500)
+	}
+
+	getApi() {
+		const settings = this.getSettings()
+		var client = apis[settings.username]
+		if(!client) {
+			this.log("Creating new API object for account " + settings.username)
+			client = apis[settings.username] = new ElectroluxDeltaApi()
+			client.setAuth(settings.username, settings.password)
+			client.lastPoll = 0
+			client.failTime = 0
+		}
+		return client
 	}
 
 	async onPoll() {
@@ -25,15 +82,8 @@ class ElectroluxPureDevice extends Homey.Device {
 			this.log("Device is not configured")
 			return;
 		}
+		const client = this.getApi()
 		let now = Date.now()
-		var client = apis[settings.username]
-		if(!client) {
-			this.log("Creating new API object for account " + settings.username)
-			client = apis[settings.username] = new ElectroluxDeltaApi()
-			client.setAuth(settings.username, settings.password)
-			client.lastPoll = 0
-			client.failTime = 0
-		}
 		if((now - client.failTime) < (POLL_INTERVAL * BACKOFF_POLL_COUNT)) {
 			this.log("In failure back-off status")
 			return
@@ -43,7 +93,7 @@ class ElectroluxPureDevice extends Homey.Device {
 				this.log("Will poll account " + settings.username + " for appliance status")
 				client.appliances = await client.getAppliances()
 			}
-			this.log(await client.appliances)
+			// this.log(await client.appliances)
 		} catch (err) {
 			this.log("Error: " + err)
 			client.failTime = now
@@ -90,13 +140,15 @@ class ElectroluxPureDevice extends Homey.Device {
 		if(props.Workmode == 'Auto') {
 			this.setCapabilityValue('onoff', true)
 			this.setCapabilityValue('SMART_mode', 'smart')
+			this.setCapabilityValue('FAN_speed', 10.0 * (props.Fanspeed + 1))
 		} else if(props.Workmode == 'Manual') {
 			this.setCapabilityValue('onoff', true)
 			this.setCapabilityValue('SMART_mode', 'manual')
+			this.setCapabilityValue('FAN_speed', 10.0 * (props.Fanspeed + 1))
 		} else /* if(props.Workmode == 'PowerOff')*/ {
 			this.setCapabilityValue('onoff', false)
+			this.setCapabilityValue('FAN_speed', 0)
 		}
-		this.setCapabilityValue('FAN_speed', 10.0 * (props.Fanspeed + 1))
 		this.setCapabilityValue('IONIZER_onoff', props.Ionizer)
 	}
 	
