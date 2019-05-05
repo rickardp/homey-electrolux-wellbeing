@@ -85,5 +85,5 @@ module.exports.ElectroluxDeltaApi = (function() {
         }
     }
 
-    return new ElectroluxDeltaApi()
+    return ElectroluxDeltaApi
 })()

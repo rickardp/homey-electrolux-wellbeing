@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/athombv/node-homey-lib/master/assets/app/schema.json",
   "id": "com.electrolux.pure",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
@@ -42,10 +42,12 @@
         "measure_co2",
         "measure_humidity",
         "measure_pm25",
+        "measure_pm10",
         "measure_temperature",
         "onoff",
         "SMART_mode",
-        "FAN_speed"
+        "FAN_speed",
+        "IONIZER_onoff"
       ],
       "images": {
         "large": "/drivers/electrolux-pure-a9/assets/images/large.png",
@@ -74,6 +76,26 @@
           "id": "add_pure_devices",
           "template": "add_devices"
         }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {"en": "App Authentication"},
+          "children": [
+            {
+              "id": "username",
+              "type": "text",
+              "label": {"en": "E-mail address"},
+              "hint": {"en": "E-mail address used in mobile app"}
+            },
+            {
+              "id": "password",
+              "type": "text",
+              "label": {"en": "Password"},
+              "hint": {"en": "Password used in mobile app"}
+            }
+          ]
+        }
       ]
     }
   ],
@@ -97,7 +119,9 @@
             "en": "Smart"
           }
         }
-      ]
+      ],
+      "getable": true,
+      "setable": true
     },
     "FAN_speed" : {
       "type": "number",
@@ -107,7 +131,59 @@
       },
       "min": 0,
       "max": 100,
-      "step": 10
+      "step": 10,
+      "getable": true,
+      "setable": true
+    },
+    "IONIZER_onoff" : {
+      "type": "boolean",
+      "title": {
+        "en": "Ionizer active"
+      },
+      "getable": true,
+      "setable": true
+    },
+    "measure_pm10": {
+      "type": "number",
+      "title": {
+        "en": "PM10",
+        "nl": "PM10",
+        "de": "PM10"
+      },
+      "units": {
+        "en": "ppm"
+      },
+      "insights": true,
+      "desc": {
+        "en": "Atmospheric Particulate Matter (μg/m3)",
+        "nl": "Deeltjesvormige luchtverontreiniging (μg/m3)",
+        "de": "Atmosphärischer Feinstaub (μg/m3)"
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "$flow": {
+        "triggers": [
+          {
+            "id": "measure_pm10_changed",
+            "title": {
+              "en": "The PM10 value has changed",
+              "nl": "De PM10 waarde is veranderd",
+              "de": "Der PM10-Wert hat sich geändert"
+            },
+            "tokens": [
+              {
+                "name": "$id",
+                "title": "$title",
+                "type": "$type",
+                "example": 2
+              }
+            ]
+          }
+        ]
+      }
     }
   }
 }

@@ -12,14 +12,15 @@ class ElectroluxPureDriver extends Homey.Driver {
     onPair( socket ) {
 		let username = '';
 		let password = '';
+		let api = new ElectroluxDeltaApi();
   
 		socket.on('login', ( data, callback ) => {
 			username = data.username;
 			password = data.password;
   
-			ElectroluxDeltaApi.setAuth(username, password)
+			api.setAuth(username, password)
 
-			ElectroluxDeltaApi.verifyCredentials()
+			api.verifyCredentials()
 				.then(credentialsAreValid => {
 					callback( null, true );
 			  	}).catch(err => {
@@ -33,7 +34,7 @@ class ElectroluxPureDriver extends Homey.Driver {
   
 		socket.on('list_devices', ( data, callback ) => {
   
-			ElectroluxDeltaApi.getAppliances()
+			api.getAppliances()
 				.then(appliances => {
 					console.log(appliances);
 					const devices = appliances.map(appliance => {
