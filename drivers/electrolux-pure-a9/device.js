@@ -129,7 +129,7 @@ class ElectroluxPureDevice extends Homey.Device {
 	updateAppliance(appliance) {
 		this.log("Updating appliance " + appliance.twin.deviceId)
 		const props = appliance.twin.properties.reported
-		//console.log(appliance.twin.properties.reported)
+		console.log(appliance.twin.properties.reported)
 		
 		this.setCapabilityValue('measure_co2', props.CO2)
 		this.setCapabilityValue('measure_humidity', props.Humidity)
@@ -139,6 +139,7 @@ class ElectroluxPureDevice extends Homey.Device {
 		this.setCapabilityValue('measure_voc', props.TVOC)
 		this.setCapabilityValue('measure_luminance', props.EnvLightLvl) // Mapping formula?
 		this.setCapabilityValue('measure_temperature', props.Temp)
+		this.setCapabilityValue('measure_FILTER', props.FilterLife)
 		
 		if(props.Workmode == 'Auto') {
 			this.setCapabilityValue('onoff', true)

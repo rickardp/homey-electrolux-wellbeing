@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/athombv/node-homey-lib/master/assets/app/schema.json",
   "id": "com.electrolux.pure",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
@@ -50,7 +50,8 @@
         "onoff",
         "SMART_mode",
         "FAN_speed",
-        "IONIZER_onoff"
+        "IONIZER_onoff",
+        "measure_FILTER"
       ],
       "images": {
         "large": "/drivers/electrolux-pure-a9/assets/images/large.png",
@@ -138,13 +139,51 @@
       "getable": true,
       "setable": true
     },
-    "IONIZER_onoff" : {
+    "IONIZER_onoff": {
       "type": "boolean",
       "title": {
         "en": "Ionizer active"
       },
       "getable": true,
       "setable": true
+    },
+    "measure_FILTER": {
+      "type": "number",
+      "title": {
+        "en": "Filter life"
+      },
+      "units": {
+        "en": "%"
+      },
+      "insights": true,
+      "min": 0,
+      "max": 100,
+      "desc": {
+        "en": "Filter life in percentage (%)"
+      },
+      "chartType": "spline",
+      "decimals": 2,
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "$flow": {
+        "triggers": [
+          {
+            "id": "measure_FILTER_changed",
+            "title": {
+              "en": "The filter life changed"
+            },
+            "tokens": [
+              {
+                "name": "$id",
+                "title": "$title",
+                "type": "$type",
+                "example": 99
+              }
+            ]
+          }
+        ]
+      }
     },
     "measure_pm10": {
       "type": "number",

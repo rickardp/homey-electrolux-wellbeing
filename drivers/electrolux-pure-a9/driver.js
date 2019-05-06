@@ -46,7 +46,8 @@ class ElectroluxPureDriver extends Homey.Driver {
 							settings: {
 								username,
 								password
-							}
+							},
+							icon: '/icon.svg'
 						};
 					});
 					callback(null, devices);
