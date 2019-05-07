@@ -206,6 +206,7 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
+      "icon": "/assets/icons/measure_PM10.svg",
       "$flow": {
         "triggers": [
           {
@@ -246,6 +247,7 @@
       "getable": true,
       "setable": false,
       "uiComponent": "sensor",
+      "icon": "/assets/icons/measure_VOC.svg",
       "$flow": {
         "triggers": [
           {
