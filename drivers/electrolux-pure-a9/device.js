@@ -135,7 +135,7 @@ class ElectroluxPureDevice extends Homey.Device {
 		this.setCapabilityValue('measure_humidity', props.Humidity)
 		this.setCapabilityValue('measure_pm25', props.PM2_5)
 		this.setCapabilityValue('measure_pm10', props.PM10)
-		//this.setCapabilityValue('measure_pm1', props.PM1)
+		this.setCapabilityValue('measure_pm1', props.PM1)
 		this.setCapabilityValue('measure_voc', props.TVOC)
 		this.setCapabilityValue('measure_luminance', props.EnvLightLvl) // Mapping formula?
 		this.setCapabilityValue('measure_temperature', props.Temp)
