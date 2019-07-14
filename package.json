@@ -1,6 +1,6 @@
 {
   "name": "homey-electrolux-pure",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Adds support for Electrolux Pure air purifiers",
   "main": "app.js",
   "dependencies": {

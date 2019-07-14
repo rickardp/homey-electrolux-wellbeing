@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/athombv/node-homey-lib/master/assets/app/schema.json",
   "id": "com.electrolux.pure",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
@@ -314,5 +314,82 @@
         ]
       }
     }
+  },
+  "flow":{
+    "actions": [
+      {
+        "id": "set_fan_speed",
+        "title": {
+          "en":"Set fan speed"
+        },
+        "hint": {
+          "en":"This action will set a fixed fan speed (and disable smart mode)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+          },
+          {
+            "name": "fan_speed",
+            "type": "number",
+            "min": 0,
+            "max": 100,
+            "title": {
+              "en": "Fan speed"
+            }
+          }
+        ]
+      },
+      {
+        "id": "enable_smart_mode",
+        "title": {
+          "en":"Enable smart mode"
+        },
+        "hint": {
+          "en":"Start the fan in smart mode (or switch to smart mode if running)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+          }
+        ]
+      },
+      {
+        "id": "enable_ionizer",
+        "title": {
+          "en":"Enable ionizer"
+        },
+        "hint": {
+          "en":"Enables the ionizer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+          }
+        ]
+      },
+      {
+        "id": "disable_ionizer",
+        "title": {
+          "en":"Disable ionizer"
+        },
+        "hint": {
+          "en":"Disables the ionizer"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+          }
+        ]
+      }
+    ]
   }
 }

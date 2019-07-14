@@ -7,6 +7,23 @@ class ElectroluxPureDriver extends Homey.Driver {
 	
 	onInit() {
 		this.log('ElectroluxPureDriver has been inited');
+
+		new Homey.FlowCardAction('set_fan_speed')
+            .register().registerRunListener((args, state) => {
+                return args.device.flow_set_fan_speed(args, state);
+            });
+		new Homey.FlowCardAction('enable_smart_mode')
+			.register().registerRunListener((args, state) => {
+				return args.device.flow_enable_smart_mode(args, state);
+			});
+		new Homey.FlowCardAction('enable_ionizer')
+			.register().registerRunListener((args, state) => {
+				return args.device.flow_enable_ionizer(args, state);
+			});
+		new Homey.FlowCardAction('disable_ionizer')
+				.register().registerRunListener((args, state) => {
+					return args.device.flow_disable_ionizer(args, state);
+			});
 	}
 	
     onPair( socket ) {

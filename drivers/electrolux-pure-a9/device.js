@@ -156,6 +156,21 @@ class ElectroluxPureDevice extends Homey.Device {
 		this.setCapabilityValue('IONIZER_onoff', props.Ionizer)
 	}
 	
+	flow_set_fan_speed(args, state) {
+		return this.setDeviceOpts({FAN_speed: args.fan_speed})
+	}
+	
+	flow_enable_smart_mode(args, state) {
+		return this.setDeviceOpts({SMART_mode: 'smart'})
+	}
+	
+	flow_enable_ionizer(args, state) {
+		return this.setDeviceOpts({IONIZER_onoff: true})
+	}
+	
+	flow_disable_ionizer(args, state) {
+		return this.setDeviceOpts({IONIZER_onoff: false})
+	}
 }
 
 module.exports = ElectroluxPureDevice;
