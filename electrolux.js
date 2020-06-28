@@ -2,60 +2,90 @@
 
 class AuthError extends Error {
     constructor(message) {
-      super(message);
-      this.name = 'AuthError';
+        super(message);
+        this.name = 'AuthError';
     }
-  }
+}
 
 module.exports.AuthError = AuthError;
 
-module.exports.ElectroluxDeltaApi = (function() {
+module.exports.ElectroluxDeltaApi = (function () {
     const fetch = require("node-fetch");
-    const MyMilaApi = require("./mymila").MyMilaApi;
+    const Homey = require('homey');
 
     const BASE_URI = "https://api.delta.electrolux.com/api/"
+    const CLIENT_VERSION = "1.8.16400";
+    const CLIENT_SECRET = Homey.env.WELLBEING_CLIENT_SECRET
 
     let auth_state = {
-        mmsToken: "",
+        clientToken: "",
         userToken: "",
         username: "",
         password: ""
     }
 
-    async function refreshMmsToken() {
-        const token = await MyMilaApi.getInitialToken()
-        return token.mms_access_token
-    }
-
-    async function refreshUserToken() {
-        auth_state.mmsToken = await refreshMmsToken()
-        const response = await fetch(BASE_URI + "Accounts/Login", {
+    async function checkForUpdate() {
+        const response = await (await fetch(BASE_URI + "updates/Wellbeing", {
             method: "POST",
             body: JSON.stringify({
-                userName: auth_state.username,
-                password: auth_state.password,
-                mmsToken: auth_state.mmsToken
+                Version: CLIENT_VERSION,
+                Platform: "iOS"
             }),
             headers: { 'Content-Type': 'application/json' }
-        })
-        if(response.status == 200) {
-            auth_state.userToken = await response.text()
-        } else if(response.status == 400) {
-            throw new AuthError("Invalid username/password")
+        })).json()
+        if (response.forceUpdate === undefined) {
+            console.log("Invalid response from update server")
+        }
+        if (response.forceUpdate) {
+            console.log("Back-end API needs to be updated")
         }
     }
 
+    async function refreshClientToken() {
+        await checkForUpdate()
+        const response = await (await fetch(BASE_URI + "Clients/Wellbeing", {
+            method: "POST",
+            body: JSON.stringify({
+                ClientSecret: CLIENT_SECRET
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        })).json()
+        if (!response.accessToken) {
+            throw new AuthError("Error refreshing client token: " + response.codeDescription)
+        }
+        auth_state.clientToken = response.accessToken
+    }
+
+    async function refreshUserToken() {
+        await refreshClientToken()
+        const response = await (await fetch(BASE_URI + "Users/Login", {
+            method: "POST",
+            body: JSON.stringify({
+                userName: auth_state.username,
+                password: auth_state.password
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + auth_state.clientToken
+            }
+        })).json()
+        if (!response.accessToken) {
+            throw new AuthError("Login error: " + response.codeDescription)
+        }
+        auth_state.userToken = response.accessToken
+    }
+
     async function fetchApi(suffix, options) {
-        if(!options) options = {}
-        if(!options.headers) options.headers = {}
-        for(var i = 0; i < 3; ++i) {
-            if(auth_state.userToken) {
+        if (!options) options = {}
+        if (!options.headers) options.headers = {}
+        for (var i = 0; i < 3; ++i) {
+            if (auth_state.userToken) {
                 options.headers.Authorization = "Bearer " + auth_state.userToken
             }
             const response = await fetch(BASE_URI + suffix, options)
-            if(response.status == 200) {
+            if (response.status == 200) {
                 return await response.json()
-            } else if(response.status >= 400 && response.status < 500) {
+            } else if (response.status >= 400 && response.status < 500) {
                 await refreshUserToken()
             } else {
                 throw new Error("Internal server error: " + response.status)
@@ -81,7 +111,11 @@ module.exports.ElectroluxDeltaApi = (function() {
         }
 
         async getAppliances() {
-            return await fetchApi("Appliances")
+            return await fetchApi("Domains/Appliances")
+        }
+
+        async getAppliance(pncId) {
+            return await fetchApi("Appliances/" + pncId)
         }
 
         async sendDeviceCommand(id, command) {

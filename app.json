@@ -1,15 +1,15 @@
 {
   "$schema": "https://raw.githubusercontent.com/athombv/node-homey-lib/master/assets/app/schema.json",
   "id": "com.electrolux.pure",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
-    "en": "Electrolux Pure"
+    "en": "Electrolux Wellbeing"
   },
   "homeyCommunityTopicId": 12718,
   "description": {
-    "en": "Adds support for Electrolux Pure air purifiers"
+    "en": "Adds support for Electrolux Wellbeing products"
   },
   "contributing": {
     "donate": {
@@ -66,8 +66,12 @@
             "next": "list_pure_devices"
           },
           "options": {
-            "usernameLabel": {"en": "E-mail address"},
-            "passwordLabel": {"en": "App password"}
+            "usernameLabel": {
+              "en": "E-mail address"
+            },
+            "passwordLabel": {
+              "en": "App password"
+            }
           }
         },
         {
@@ -85,19 +89,29 @@
       "settings": [
         {
           "type": "group",
-          "label": {"en": "App Authentication"},
+          "label": {
+            "en": "App Authentication"
+          },
           "children": [
             {
               "id": "username",
               "type": "text",
-              "label": {"en": "E-mail address"},
-              "hint": {"en": "E-mail address used in mobile app"}
+              "label": {
+                "en": "E-mail address"
+              },
+              "hint": {
+                "en": "E-mail address used in mobile app"
+              }
             },
             {
               "id": "password",
               "type": "text",
-              "label": {"en": "Password"},
-              "hint": {"en": "Password used in mobile app"}
+              "label": {
+                "en": "Password"
+              },
+              "hint": {
+                "en": "Password used in mobile app"
+              }
             }
           ]
         }
@@ -105,7 +119,7 @@
     }
   ],
   "capabilities": {
-    "SMART_mode" : {
+    "SMART_mode": {
       "type": "enum",
       "uiComponent": "picker",
       "title": {
@@ -128,7 +142,7 @@
       "getable": true,
       "setable": true
     },
-    "FAN_speed" : {
+    "FAN_speed": {
       "type": "number",
       "uiComponent": "slider",
       "title": {
@@ -315,15 +329,15 @@
       }
     }
   },
-  "flow":{
+  "flow": {
     "actions": [
       {
         "id": "set_fan_speed",
         "title": {
-          "en":"Set fan speed"
+          "en": "Set fan speed"
         },
         "hint": {
-          "en":"This action will set a fixed fan speed (and disable smart mode)"
+          "en": "This action will set a fixed fan speed (and disable smart mode)"
         },
         "args": [
           {
@@ -345,10 +359,10 @@
       {
         "id": "enable_smart_mode",
         "title": {
-          "en":"Enable smart mode"
+          "en": "Enable smart mode"
         },
         "hint": {
-          "en":"Start the fan in smart mode (or switch to smart mode if running)"
+          "en": "Start the fan in smart mode (or switch to smart mode if running)"
         },
         "args": [
           {
@@ -361,10 +375,10 @@
       {
         "id": "enable_ionizer",
         "title": {
-          "en":"Enable ionizer"
+          "en": "Enable ionizer"
         },
         "hint": {
-          "en":"Enables the ionizer"
+          "en": "Enables the ionizer"
         },
         "args": [
           {
@@ -377,10 +391,10 @@
       {
         "id": "disable_ionizer",
         "title": {
-          "en":"Disable ionizer"
+          "en": "Disable ionizer"
         },
         "hint": {
-          "en":"Disables the ionizer"
+          "en": "Disables the ionizer"
         },
         "args": [
           {

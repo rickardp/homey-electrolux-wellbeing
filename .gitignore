@@ -58,3 +58,5 @@ typings/
 .env
 
 test_*.js
+
+env.json
