@@ -56,7 +56,7 @@ class ElectroluxPureDriver extends Homey.Driver {
 					console.log(appliances);
 					const devices = appliances.map(appliance => {
 						return {
-							name: appliance.applianceData.applianceName,
+							name: appliance.applianceName,
 							data: {
 								id: appliance.pncId
 							},
