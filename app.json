@@ -52,6 +52,8 @@
         "SMART_mode",
         "FAN_speed",
         "IONIZER_onoff",
+        "LOCK_onoff",
+        "LIGHT_onoff",
         "measure_FILTER"
       ],
       "images": {
@@ -158,6 +160,22 @@
       "type": "boolean",
       "title": {
         "en": "Ionizer active"
+      },
+      "getable": true,
+      "setable": true
+    },
+    "LOCK_onoff": {
+      "type": "boolean",
+      "title": {
+        "en": "Lock controls"
+      },
+      "getable": true,
+      "setable": true
+    },
+    "LIGHT_onoff": {
+      "type": "boolean",
+      "title": {
+        "en": "Indicator light"
       },
       "getable": true,
       "setable": true

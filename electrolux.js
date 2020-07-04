@@ -86,6 +86,7 @@ module.exports.ElectroluxDeltaApi = (function () {
             if (response.status == 200) {
                 return await response.json()
             } else if (response.status >= 400 && response.status < 500) {
+                console.log("Error: " + response.status)
                 await refreshUserToken()
             } else {
                 throw new Error("Internal server error: " + response.status)

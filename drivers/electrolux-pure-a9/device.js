@@ -15,10 +15,22 @@ class ElectroluxPureDevice extends Homey.Device {
 		setTimeout(this.onPoll.bind(this), 500)
 		setInterval(this.onPoll.bind(this), POLL_INTERVAL)
 		let dev = this
-		this.registerMultipleCapabilityListener(['onoff', 'FAN_speed', 'SMART_mode', 'IONIZER_onoff'], (valueObj, optsObj) => {
+		let caps = this.getCapabilities()
+		for(let newcap of ['LIGHT_onoff', 'LOCK_onoff']) {
+			if(!caps.includes(newcap)) {
+				console.log("Migrating device from old version: Adding capability " + newcap)
+				this.addCapability(newcap)
+			}
+		}
+		console.log(caps)
+		this.registerMultipleCapabilityListener(['onoff', 'FAN_speed', 'SMART_mode', 'IONIZER_onoff', 'LIGHT_onoff', 'LOCK_onoff'], (valueObj, optsObj) => {
 			this.log('Setting caps', valueObj);
 			return dev.setDeviceOpts.bind(dev)(valueObj)
 		}, 500);
+	}
+
+	onDeleted() {
+		this.isDeleted = true
 	}
 
 	async setDeviceOpts(valueObj) {
@@ -34,6 +46,18 @@ class ElectroluxPureDevice extends Homey.Device {
 			this.log("SMART_mode: " + valueObj.SMART_mode)
 			await client.sendDeviceCommand(deviceId, {
 				WorkMode: valueObj.SMART_mode == "manual" ? "Manual" : "Auto"
+			})
+		}
+		if (valueObj.LIGHT_onoff !== undefined) {
+			this.log("LIGHT_onoff: " + valueObj.LIGHT_onoff)
+			await client.sendDeviceCommand(deviceId, {
+				LedRingLight: valueObj.LIGHT_onoff
+			})
+		}
+		if (valueObj.LOCK_onoff !== undefined) {
+			this.log("LOCK_onoff: " + valueObj.LOCK_onoff)
+			await client.sendDeviceCommand(deviceId, {
+				SafetyLock: valueObj.LOCK_onoff
 			})
 		}
 		if (valueObj.IONIZER_onoff !== undefined) {
@@ -74,6 +98,7 @@ class ElectroluxPureDevice extends Homey.Device {
 	}
 
 	async onPoll() {
+		if(this.isDeleted) return
 		const deviceId = this.getData().id
 		if (!deviceId) return
 		this.log("Polling for device " + deviceId)
@@ -149,6 +174,8 @@ class ElectroluxPureDevice extends Homey.Device {
 			this.setCapabilityValue('FAN_speed', 0)
 		}
 		this.setCapabilityValue('IONIZER_onoff', props.Ionizer)
+		this.setCapabilityValue('LIGHT_onoff', props.UILight)
+		this.setCapabilityValue('LOCK_onoff', props.SafetyLock)
 	}
 
 	flow_set_fan_speed(args, state) {
