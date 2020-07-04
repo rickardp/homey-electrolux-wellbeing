@@ -1,5 +1,8 @@
 {
   "0.1.0": {
     "en": "Migrated to the updated Electrolux Wellbeing API"
+  },
+  "0.1.1": {
+    "en": "Added control of LED ring and controls lock. Fixed an issue with device enumeration during pairing"
   }
 }
