@@ -4,5 +4,8 @@
   },
   "0.1.1": {
     "en": "Added control of LED ring and controls lock. Fixed an issue with device enumeration during pairing"
+  },
+  "0.1.2": {
+    "en": "Added LED ring and control lock controls. Fixed an issue with device enumeration during pairing."
   }
 }
