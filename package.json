@@ -1,6 +1,6 @@
 {
   "name": "homey-electrolux-pure",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Adds support for Electrolux Pure air purifiers",
   "main": "app.js",
   "dependencies": {
@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rickardp/homey-electrolux-pure/issues"
+    "url": "https://github.com/rickardp/homey-electrolux-wellbeing/issues/new/choose"
   },
-  "homepage": "https://github.com/rickardp/homey-electrolux-pure#readme"
+  "homepage": "https://github.com/rickardp/homey-electrolux-wellbeing#readme"
 }
