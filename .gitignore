@@ -60,3 +60,6 @@ typings/
 test_*.js
 
 env.json
+
+# Added by Homey CLI
+/.homeybuild/
