@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/athombv/node-homey-lib/master/assets/app/schema.json",
   "id": "com.electrolux.pure",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "compatibility": ">=2.0.0",
   "sdk": 2,
   "name": {
