@@ -1,76 +1,59 @@
 'use strict';
 
 const Homey = require('homey');
-const ElectroluxDeltaApi = require('../../electrolux').ElectroluxDeltaApi;
+const { ElectroluxApi } = require('../../electrolux');
 
 class ElectroluxPureDriver extends Homey.Driver {
-	
-	onInit() {
-		this.log('ElectroluxPureDriver has been inited');
 
-		new Homey.FlowCardAction('set_fan_speed')
-            .register().registerRunListener((args, state) => {
-                return args.device.flow_set_fan_speed(args, state);
-            });
-		new Homey.FlowCardAction('enable_smart_mode')
-			.register().registerRunListener((args, state) => {
-				return args.device.flow_enable_smart_mode(args, state);
-			});
-		new Homey.FlowCardAction('enable_ionizer')
-			.register().registerRunListener((args, state) => {
-				return args.device.flow_enable_ionizer(args, state);
-			});
-		new Homey.FlowCardAction('disable_ionizer')
-				.register().registerRunListener((args, state) => {
-					return args.device.flow_disable_ionizer(args, state);
-			});
-	}
-	
-    onPair( socket ) {
-		let username = '';
-		let password = '';
-		let api = new ElectroluxDeltaApi();
-  
-		socket.on('login', ( data, callback ) => {
-			username = data.username;
-			password = data.password;
-  
-			api.setAuth(username, password)
+    onInit() {
+        this.log('ElectroluxPureDriver has been inited');
 
-			api.verifyCredentials()
-				.then(credentialsAreValid => {
-					callback( null, true );
-			  	}).catch(err => {
-					if(err.name == 'AuthError') {
-						callback( null, false );
-					} else {
-						callback(err);
-					}
-			  	});
-		});
-  
-		socket.on('list_devices', ( data, callback ) => {
-  
-			api.getAppliances()
-				.then(appliances => {
-					console.log(appliances);
-					const devices = appliances.map(appliance => {
-						return {
-							name: appliance.applianceName,
-							data: {
-								id: appliance.pncId
-							},
-							settings: {
-								username,
-								password
-							},
-							icon: '/icon.svg'
-						};
-					});
-					callback(null, devices);
-				})
-		});
-	  }
+        // Registrer flytkort for handlinger
+        this.registerFlowCardAction('set_fan_speed');
+        this.registerFlowCardAction('enable_smart_mode');
+        this.registerFlowCardAction('enable_ionizer');
+        this.registerFlowCardAction('disable_ionizer');
+    }
+
+    registerFlowCardAction(cardName) {
+        const card = this.homey.flow.getActionCard(cardName);
+        card.registerRunListener((args, state) => {
+            return args.device['flow_' + cardName](args, state);
+        });
+    }
+
+    async onPair(session) {
+        let api = new ElectroluxApi();
+
+        session.setHandler('login', async (data) => {
+            const { username, password } = data;
+            api.setAuth(username, password);
+
+            try {
+                await api.exchangeToken(); // Utfører hele autentiseringsprosessen inkludert tokenutveksling
+                return true; 
+            } catch (error) {
+                this.log('Login failed:', error);
+                throw new Error('Login failed'); 
+            }
+        });
+
+        session.setHandler('list_devices', async (data) => {
+            try {
+                const appliances = await api.getAppliances();
+                return appliances.map(appliance => {
+                    return {
+                        name: appliance.applianceName,
+                        data: { id: appliance.pncId },
+                        settings: { username: api.auth_state.username, password: api.auth_state.password }
+                    };
+                });
+            } catch (error) {
+                this.log('Error listing devices:', error);
+                throw new Error('Failed to list devices');
+            }
+        });
+    }
 }
 
 module.exports = ElectroluxPureDriver;
