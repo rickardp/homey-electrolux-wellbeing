@@ -6,9 +6,8 @@ const { ElectroluxApi } = require('../../electrolux');
 class ElectroluxPureDriver extends Homey.Driver {
 
     onInit() {
-        this.log('ElectroluxPureDriver has been inited');
+        this.log('ElectroluxPureDriver has been initialized');
 
-        // Registrer flytkort for handlinger
         this.registerFlowCardAction('set_fan_speed');
         this.registerFlowCardAction('enable_smart_mode');
         this.registerFlowCardAction('enable_manual_mode');
@@ -35,7 +34,7 @@ class ElectroluxPureDriver extends Homey.Driver {
             api.setAuth(username, password);
 
             try {
-                await api.exchangeToken(); // Utfører hele autentiseringsprosessen inkludert tokenutveksling
+                await api.exchangeToken();
                 return true; 
             } catch (error) {
                 this.log('Login failed:', error);
@@ -46,10 +45,11 @@ class ElectroluxPureDriver extends Homey.Driver {
         session.setHandler('list_devices', async (data) => {
             try {
                 const appliances = await api.getAppliances();
+                console.log(appliances);
                 return appliances.map(appliance => {
                     return {
-                        name: appliance.applianceName,
-                        data: { id: appliance.pncId },
+                        name: appliance.applianceData.applianceName,
+                        data: { id: appliance.applianceId },
                         settings: { username: api.auth_state.username, password: api.auth_state.password }
                     };
                 });

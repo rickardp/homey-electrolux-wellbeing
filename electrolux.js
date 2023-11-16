@@ -1,7 +1,7 @@
 'use strict';
 
+const Homey = require('homey');
 const fetch = require("node-fetch");
-const config = require('./config');
 
 
 /**
@@ -31,9 +31,9 @@ class ElectroluxApi {
         this.TOKEN_URL = this.BASE_URL + "one-account-authorization/api/v1/token";
         this.AUTHENTICATION_URL = this.BASE_URL + "one-account-authentication/api/v1/authenticate";
         this.API_URL = this.BASE_URL + "appliance/api/v2/appliances";
-        this.CLIENT_ID = config.CLIENT_ID;
-        this.CLIENT_SECRET = config.CLIENT_SECRET;
-        this.X_API_KEY = config.X_API_KEY;
+        this.CLIENT_ID = Homey.env.CLIENT_ID;
+        this.CLIENT_SECRET = Homey.env.CLIENT_SECRET
+        this.X_API_KEY = Homey.env.X_API_KEY;
 
         // Initializes the authentication state.
         this.auth_state = {
@@ -155,6 +155,8 @@ class ElectroluxApi {
         if (!this.auth_state.exchangeToken || new Date() >= this.auth_state.expiresAt) {
             await this.exchangeToken();
         }
+        
+        console.log(`fetchApi(${suffix}, ${method}, ${body})`);
 
 
         const options = {
@@ -169,14 +171,13 @@ class ElectroluxApi {
         
         if (body) {
             options.body = JSON.stringify(body);
-         }
-
+        }
         try {
             const response = await fetch(this.API_URL + suffix, options);
-            const responseBody = await response.text(); // Henter responsen som tekst én gang
+            const responseBody = await response.text();
 
             if (!response.ok) {
-                console.error(`API request failed with status: ${response.status}`);
+                console.error(`API request to ${suffix} failed with status: ${response.status}`);
                 console.error(`API response body: ${responseBody}`);
                 this.handleError(new Error(`API request failed: ${response.status} ${response.statusText}`));
                 return;
@@ -185,7 +186,6 @@ class ElectroluxApi {
             return responseBody ? JSON.parse(responseBody) : null; // Forenklet returhåndtering
 
             } catch (error) {
-                // Håndterer feil
                 console.error(`Error in fetchApi: ${error}`);
                 this.handleError(error);
             }
@@ -223,6 +223,9 @@ class ElectroluxApi {
      */
     async getAppliance(pncId) {
         try {
+            if (!pncId) {
+                throw new Error("Missing device ID");
+            }
             return await this.fetchApi(`/${pncId}`, 'GET');
         } catch (error) {
             this.log(`Error fetching appliance with ID ${pncId}: ${error}`);
@@ -235,7 +238,7 @@ class ElectroluxApi {
      * @param {string} message - The message to log.
      */
     log(message) {
-        console.log(message); // Eller bruk en annen logge-mekanisme etter behov
+        console.log(message);
     }
 
 

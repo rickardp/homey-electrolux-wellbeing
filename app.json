@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/athombv/node-homey-lib/master/assets/app/schema.json",
   "id": "com.electrolux.pure",
-  "version": "0.1.9",
+  "version": "1.0.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "name": {
@@ -49,7 +49,6 @@
         "measure_pm10",
         "measure_pm1",
         "measure_temperature",
-        "measure_luminance",
         "measure_voc",
         "onoff",
         "SMART_mode",

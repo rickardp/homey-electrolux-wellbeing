@@ -46,17 +46,22 @@ class ElectroluxPureDevice extends Homey.Device {
 	 * @method getApi - Returns the Electrolux API object for the device's configured account.
 	 * @method onDeleted - Sets the `isDeleted` property of the device to `true` when the device is deleted from Homey.
 	 */
-    onInit() {
+    async onInit() {
         this.log('ElectroluxPureDevice has been inited');
         setTimeout(this.onPoll.bind(this), 500);
         setInterval(this.onPoll.bind(this), POLL_INTERVAL);
 
-        // Add missing capabilities when upgrading
-        const capsToAdd = ['LIGHT_onoff', 'LOCK_onoff'];
-        for (const cap of capsToAdd) {
+		  // Add missing capabilities when upgrading
+        for (const cap of ['LIGHT_onoff', 'LOCK_onoff']) {
             if (!this.hasCapability(cap)) {
-                this.addCapability(cap);
                 this.log("Migrating device from old version: Adding capability " + cap);
+                await this.addCapability(cap);
+            }
+        }
+        for (const cap of ['measure_luminance']) {
+            if (this.hasCapability(cap)) {
+                this.log("Migrating device from old version: Removing capability " + cap);
+                await this.removeCapability(cap);
             }
         }
 
@@ -229,18 +234,15 @@ class ElectroluxPureDevice extends Homey.Device {
 		}
 
 		const props = deviceData.properties.reported;
-		this.log("Oppdaterer enhet med ID: " + deviceData.applianceId);
+		this.log("Updating appliance: " + deviceData.applianceId);
 
 		try {
 			await this.setCapabilityValue('measure_voc', props.TVOC);
-			await this.setCapabilityValue('measure_co2', props.CO2);
-			await this.setCapabilityValue('measure_humidity', props.Humidity);
-			await this.setCapabilityValue('measure_co2', props.CO2);
+			await this.setCapabilityValue('measure_co2', props.ECO2);
 			await this.setCapabilityValue('measure_humidity', props.Humidity);
 			await this.setCapabilityValue('measure_pm25', props.PM2_5);
 			await this.setCapabilityValue('measure_pm10', props.PM10);
 			await this.setCapabilityValue('measure_pm1', props.PM1);
-			await this.setCapabilityValue('measure_luminance', props.EnvLightLvl ? props.EnvLightLvl : 0);
 			await this.setCapabilityValue('measure_temperature', props.Temp);
 			await this.setCapabilityValue('measure_FILTER', props.FilterLife);
 			await this.log("Device data updated");
@@ -274,9 +276,6 @@ class ElectroluxPureDevice extends Homey.Device {
         return this.setDeviceOpts({ SMART_mode: 'smart' });
     }
 
-    flow_enable_manual_mode(args, state) {
-        return this.setDeviceOpts({ SMART_mode: 'manual' });
-    }
     flow_enable_ionizer(args, state) {
         return this.setDeviceOpts({ IONIZER_onoff: true });
     }
@@ -285,22 +284,21 @@ class ElectroluxPureDevice extends Homey.Device {
         return this.setDeviceOpts({ IONIZER_onoff: false });
     }
 
-	flow_enable_indicator_light(args, state) {
-        return this.setDeviceOpts({ LIGHT_onoff: true });
-	}
+    flow_enable_indicator_light(args, state) {
+          return this.setDeviceOpts({ LIGHT_onoff: true });
+    }
 
-	flow_disable_indicator_light(args, state) {
-        return this.setDeviceOpts({ LIGHT_onoff: false });
-	}
-	
-	flow_enable_lock(args, state) {
-        return this.setDeviceOpts({ LOCK_onoff: true });
-	}
+    flow_disable_indicator_light(args, state) {
+          return this.setDeviceOpts({ LIGHT_onoff: false });
+    }
 
-	flow_disable_lock(args, state) {
-        return this.setDeviceOpts({ LOCK_onoff: false });
-	}
-	
+    flow_enable_lock(args, state) {
+          return this.setDeviceOpts({ LOCK_onoff: true });
+    }
+
+    flow_disable_lock(args, state) {
+          return this.setDeviceOpts({ LOCK_onoff: false });
+    }
 }
 
 module.exports = ElectroluxPureDevice;

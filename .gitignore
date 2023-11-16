@@ -61,5 +61,7 @@ test_*.js
 
 env.json
 
+*.local.json
+
 # Added by Homey CLI
 /.homeybuild/
