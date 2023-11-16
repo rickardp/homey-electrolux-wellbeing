@@ -274,6 +274,9 @@ class ElectroluxPureDevice extends Homey.Device {
         return this.setDeviceOpts({ SMART_mode: 'smart' });
     }
 
+    flow_enable_manual_mode(args, state) {
+        return this.setDeviceOpts({ SMART_mode: 'manual' });
+    }
     flow_enable_ionizer(args, state) {
         return this.setDeviceOpts({ IONIZER_onoff: true });
     }
@@ -281,6 +284,23 @@ class ElectroluxPureDevice extends Homey.Device {
     flow_disable_ionizer(args, state) {
         return this.setDeviceOpts({ IONIZER_onoff: false });
     }
+
+	flow_enable_indicator_light(args, state) {
+        return this.setDeviceOpts({ LIGHT_onoff: true });
+	}
+
+	flow_disable_indicator_light(args, state) {
+        return this.setDeviceOpts({ LIGHT_onoff: false });
+	}
+	
+	flow_enable_lock(args, state) {
+        return this.setDeviceOpts({ LOCK_onoff: true });
+	}
+
+	flow_disable_lock(args, state) {
+        return this.setDeviceOpts({ LOCK_onoff: false });
+	}
+	
 }
 
 module.exports = ElectroluxPureDevice;
