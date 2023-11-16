@@ -51,19 +51,19 @@ class ElectroluxPureDevice extends Homey.Device {
         setTimeout(this.onPoll.bind(this), 500);
         setInterval(this.onPoll.bind(this), POLL_INTERVAL);
 
-		// Add missing capabilities when upgrading
+		  // Add missing capabilities when upgrading
         for (const cap of ['LIGHT_onoff', 'LOCK_onoff']) {
             if (!this.hasCapability(cap)) {
                 this.log("Migrating device from old version: Adding capability " + cap);
                 await this.addCapability(cap);
             }
-		}
-		for (const cap of ['measure_luminance']) {
+        }
+        for (const cap of ['measure_luminance']) {
             if (this.hasCapability(cap)) {
-				this.log("Migrating device from old version: Removing capability " + cap);
-				await this.removeCapability(cap);
-			}
-		}
+                this.log("Migrating device from old version: Removing capability " + cap);
+                await this.removeCapability(cap);
+            }
+        }
 
         // Listen to multiple capabilities simultaneously
         this.registerMultipleCapabilityListener(
@@ -282,6 +282,22 @@ class ElectroluxPureDevice extends Homey.Device {
 
     flow_disable_ionizer(args, state) {
         return this.setDeviceOpts({ IONIZER_onoff: false });
+    }
+
+    flow_enable_indicator_light(args, state) {
+          return this.setDeviceOpts({ LIGHT_onoff: true });
+    }
+
+    flow_disable_indicator_light(args, state) {
+          return this.setDeviceOpts({ LIGHT_onoff: false });
+    }
+
+    flow_enable_lock(args, state) {
+          return this.setDeviceOpts({ LOCK_onoff: true });
+    }
+
+    flow_disable_lock(args, state) {
+          return this.setDeviceOpts({ LOCK_onoff: false });
     }
 }
 

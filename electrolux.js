@@ -171,11 +171,10 @@ class ElectroluxApi {
         
         if (body) {
             options.body = JSON.stringify(body);
-         }
-
+        }
         try {
             const response = await fetch(this.API_URL + suffix, options);
-            const responseBody = await response.text(); // Henter responsen som tekst én gang
+            const responseBody = await response.text();
 
             if (!response.ok) {
                 console.error(`API request to ${suffix} failed with status: ${response.status}`);

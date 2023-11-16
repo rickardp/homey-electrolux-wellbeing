@@ -356,6 +356,9 @@
         "title": {
           "en": "Set fan speed"
         },
+        "titleFormatted": {
+          "en": "Set fan speed to [[fan_speed]]%"
+        },
         "hint": {
           "en": "This action will set a fixed fan speed (and disable smart mode)"
         },
@@ -381,6 +384,9 @@
         "title": {
           "en": "Enable smart mode"
         },
+        "titleFormatted": {
+          "en": "Enable smart mode"
+        },
         "hint": {
           "en": "Start the fan in smart mode (or switch to smart mode if running)"
         },
@@ -393,8 +399,30 @@
         ]
       },
       {
+        "id": "enable_manual_mode",
+        "title": {
+          "en": "Enable manual mode"
+        },
+        "titleFormatted": {
+          "en": "Enable manual mode"
+        },
+        "hint": {
+          "en": "Start the fan in manual mode (or switch to manual mode if running)"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+          }
+        ]
+      },      
+      {
         "id": "enable_ionizer",
         "title": {
+          "en": "Enable ionizer"
+        },
+        "titleFormatted": {
           "en": "Enable ionizer"
         },
         "hint": {
@@ -413,9 +441,60 @@
         "title": {
           "en": "Disable ionizer"
         },
+        "titleFormatted": {
+          "en": "Disable ionizer"
+        },
         "hint": {
           "en": "Disables the ionizer"
         },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+          }
+        ]
+      },
+      {
+        "id": "enable_indicator_light",
+        "title": { "en": "Enable indicator light" },
+        "titleFormatted": { "en": "Enable indicator light" },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+          }
+        ]
+      },
+      {
+        "id": "disable_indicator_light",
+        "title": { "en": "Disable indicator light" },
+        "titleFormatted": { "en": "Disable indicator light" },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+          }
+        ]
+      },
+      {
+        "id": "enable_lock",
+        "title": { "en": "Enable lock control" },
+        "titleFormatted": { "en": "Enable lock control" },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+          }
+        ]
+      },
+      {
+        "id": "disable_lock",
+        "title": { "en": "Disable lock control" },
+        "titleFormatted": { "en": "Disable lock control" },
         "args": [
           {
             "type": "device",
