@@ -6,9 +6,14 @@
   "dependencies": {
     "node-fetch": "^2.6.7"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "homey-login": "homey login",
+    "start": "yarn build && cd .homeybuild && homey app run",
+    "install-app": "yarn build && cd .homeybuild && homey app install",
+    "validate": "yarn build && cd .homeybuild && homey app validate",
+    "publish": "yarn build && cd .homeybuild && homey app publish",
+    "build": "homey app build && cp env.json .homeybuild/ && cd .homeybuild && yarn workspaces focus --production",
+    "validate-app": "homey app validate"
   },
   "repository": {
     "type": "git",
@@ -19,5 +24,22 @@
   "bugs": {
     "url": "https://github.com/rickardp/homey-electrolux-wellbeing/issues/new/choose"
   },
-  "homepage": "https://github.com/rickardp/homey-electrolux-wellbeing#readme"
+  "homepage": "https://github.com/rickardp/homey-electrolux-wellbeing#readme",
+  "packageManager": "yarn@4.0.2",
+  "devDependencies": {
+    "@tsconfig/node16": "^16.1.1",
+    "@types/eslint": "^8",
+    "@types/homey": "npm:homey-apps-sdk-v3-types@^0.3.5",
+    "@types/node": "^20.9.1",
+    "@types/node-fetch": "^2.6.9",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
+    "@vercel/ncc": "^0.38.1",
+    "athom-api": "^3.9.0",
+    "eslint": "^8.53.0",
+    "eslint-config-athom": "^3.1.1",
+    "eslint-plugin-prettier": "^5.0.1",
+    "homey": "^3.1.2",
+    "typescript": "^5.2.2"
+  }
 }

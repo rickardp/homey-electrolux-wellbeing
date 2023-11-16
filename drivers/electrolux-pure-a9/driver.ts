@@ -1,11 +1,10 @@
-'use strict';
-
-const Homey = require('homey');
-const { ElectroluxApi } = require('../../electrolux');
+import Homey from 'homey';
+import { ElectroluxApi } from '../../electrolux';
+import { PairSession } from 'homey/lib/Driver';
 
 class ElectroluxPureDriver extends Homey.Driver {
 
-    onInit() {
+    async onInit() {
         this.log('ElectroluxPureDriver has been initialized');
 
         this.registerFlowCardAction('set_fan_speed');
@@ -19,15 +18,15 @@ class ElectroluxPureDriver extends Homey.Driver {
         this.registerFlowCardAction('disable_indicator_light');
     }
 
-    registerFlowCardAction(cardName) {
+    registerFlowCardAction(cardName : string) {
         const card = this.homey.flow.getActionCard(cardName);
         card.registerRunListener((args, state) => {
             return args.device['flow_' + cardName](args, state);
         });
     }
 
-    async onPair(session) {
-        let api = new ElectroluxApi();
+    async onPair(session : PairSession) {
+        let api = new ElectroluxApi(this.log);
 
         session.setHandler('login', async (data) => {
             const { username, password } = data;
@@ -46,7 +45,7 @@ class ElectroluxPureDriver extends Homey.Driver {
             try {
                 const appliances = await api.getAppliances();
                 console.log(appliances);
-                return appliances.map(appliance => {
+                return appliances.map((appliance : any) => {
                     return {
                         name: appliance.applianceData.applianceName,
                         data: { id: appliance.applianceId },

@@ -22,5 +22,8 @@
   },
   "0.1.7": {
     "en": "Newer versions of the A9 seems to have removed the luminance meter. Default to 0 if not present."
+  },
+  "1.0.0": {
+    "en": "Homey API v3 support, supports new Electrolux backend"
   }
 }

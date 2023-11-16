@@ -1,53 +1,23 @@
-'use strict';
+import Homey, { Api } from 'homey';
+import { ElectroluxApi } from '../../electrolux';
 
-const Homey = require('homey');
-const { ElectroluxApi } = require('../../electrolux');
+let apis: {[x: string]: ElectroluxApiClient} = {};
 
-/**
- * This section of code initializes an empty object to store the Electrolux API objects for each configured account.
- * @type {Object}
- */
-let apis = {};
-
-/**
- * This section of code defines the constants `POLL_INTERVAL` and `BACKOFF_POLL_COUNT`.
- * `POLL_INTERVAL` is the interval (in milliseconds) at which the device polls for the appliance status.
- * `BACKOFF_POLL_COUNT` is the number of times the device will back off from polling if it fails to get the appliance status.
- * @constant {number} POLL_INTERVAL - The interval (in milliseconds) at which the device polls for the appliance status.
- * @constant {number} BACKOFF_POLL_COUNT - The number of times the device will back off from polling if it fails to get the appliance status.
- */
 const POLL_INTERVAL = 100000.0; //Was 60000.0
 const BACKOFF_POLL_COUNT = 5; //Was 15
 
-/**
- * This file contains the ElectroluxPureDevice class which represents a Homey device for an Electrolux Pure A9 air purifier.
- * The class handles polling for the device's appliance status and updating the device accordingly.
- * It also handles setting device options (such as WorkMode, Fanspeed, etc.) based on the device's capabilities.
- * The class uses the ElectroluxApi class to communicate with the Electrolux Pure API.
- * @class
- * @extends Homey.Device
- */
+interface ElectroluxApiClient {
+	api: ElectroluxApi;
+	lastPoll: number;
+	failTime: number;
+	appliances: any;
+}
+
 class ElectroluxPureDevice extends Homey.Device {
+	isDeleted: boolean = false;
 	
-	/**
-	 * This section of code defines the ElectroluxPureDevice class and its methods.
-	 * The `onInit` method initializes the device and sets up polling for the device's appliance status.
-	 * It also adds missing capabilities and registers listeners for multiple capabilities.
-	 * The `setDeviceOpts` method updates the device's options based on the device's capabilities.
-	 * The `getApi` method returns the Electrolux API object for the device's configured account.
-	 * The `onDeleted` method sets the `isDeleted` property of the device to `true` when the device is deleted from Homey.
-	 * @class
-	 * @property {boolean} isDeleted - Indicates whether the device has been deleted from Homey.
-	 * @property {Object} apis - Stores the Electrolux API objects for each configured account.
-	 * @property {number} POLL_INTERVAL - The interval (in milliseconds) at which the device polls for the appliance status.
-	 * @property {number} BACKOFF_POLL_COUNT - The number of times the device will back off from polling if it fails to get the appliance status.
-	 * @method onInit - Initializes the device and sets up polling for the device's appliance status.
-	 * @method setDeviceOpts - Updates the device's options based on the device's capabilities.
-	 * @method getApi - Returns the Electrolux API object for the device's configured account.
-	 * @method onDeleted - Sets the `isDeleted` property of the device to `true` when the device is deleted from Homey.
-	 */
     async onInit() {
-        this.log('ElectroluxPureDevice has been inited');
+        this.log('ElectroluxPureDevice has been initialized');
         setTimeout(this.onPoll.bind(this), 500);
         setInterval(this.onPoll.bind(this), POLL_INTERVAL);
 
@@ -73,37 +43,23 @@ class ElectroluxPureDevice extends Homey.Device {
         );
     }
 
-	/**
-	 * Sets the `isDeleted` property of the device to `true` when the device is deleted from Homey.
-	 * @function
-	 * @name onDeleted
-	 * @memberof ElectroluxPureDevice
-	 * @instance
-	 */
 	onDeleted() {
 		this.isDeleted = true;
 	}
 
-	/**
-	 * This file contains the ElectroluxPureDevice class which represents a Homey device for an Electrolux Pure A9 air purifier.
-	 * The class handles polling for the device's appliance status and updating the device accordingly.
-	 * It also handles setting device options (such as WorkMode, Fanspeed, etc.) based on the device's capabilities.
-	 * The class uses the ElectroluxApi class to communicate with the Electrolux Pure API.
-	 * @class
-	 */
-	async setDeviceOpts(valueObj) {
+	async setDeviceOpts(valueObj : {[x: string]: any}) {
 		const deviceId = this.getData().id;
 		const client = this.getApi();
 
 		try {
 			// Get the current status of the device
-			const deviceStatus = await client.getAppliance(deviceId);
+			const deviceStatus = await client.api.getAppliance(deviceId);
 
 			// Update WorkMode based on onoff and SMART_mode
 			if (valueObj.onoff !== undefined) {
 				this.log("onoff: " + valueObj.onoff);
 				const workMode = valueObj.onoff ? (valueObj.SMART_mode === "manual" ? "Manual" : "Auto") : "PowerOff";
-				await client.sendDeviceCommand(deviceId, { WorkMode: workMode });
+				await client.api.sendDeviceCommand(deviceId, { WorkMode: workMode });
 				this.log(`WorkMode command sent: ${workMode}`);
 			}
 
@@ -111,11 +67,11 @@ class ElectroluxPureDevice extends Homey.Device {
 			if (valueObj.SMART_mode !== undefined && valueObj.onoff === undefined) {
 				this.log("SMART_mode: " + valueObj.SMART_mode);
 				const workMode = valueObj.SMART_mode === "manual" ? "Manual" : "Auto";
-				await client.sendDeviceCommand(deviceId, { WorkMode: workMode });
+				await client.api.sendDeviceCommand(deviceId, { WorkMode: workMode });
 				this.log(`SMART_mode command sent: ${workMode}`);
 			}
 
-			const commandMapping = {
+			const commandMapping : {[x: string]: string} = {
 				'LIGHT_onoff': 'UILight',
 				'LOCK_onoff': 'SafetyLock',
 				'IONIZER_onoff': 'Ionizer',
@@ -135,11 +91,11 @@ class ElectroluxPureDevice extends Homey.Device {
 							// Code unknown
 							return;
 						} else {
-						await client.sendDeviceCommand(deviceId, { [apiCommandName]: valueObj[cap] / 10 });
+						await client.api.sendDeviceCommand(deviceId, { [apiCommandName]: valueObj[cap] / 10 });
 						this.log(`${cap}: ${valueObj[cap] / 10}`);
 						}
 					} else {
-						await client.sendDeviceCommand(deviceId, { [apiCommandName]: valueObj[cap] });
+						await client.api.sendDeviceCommand(deviceId, { [apiCommandName]: valueObj[cap] });
 						this.log(`${cap}: ${valueObj[cap]}`);
 					}
 				}
@@ -152,21 +108,18 @@ class ElectroluxPureDevice extends Homey.Device {
 			setTimeout(this.onPoll.bind(this), 500);
 	}
 
-
-	/**
-	 * Returns the Electrolux API object for the device's configured account.
-	 * If the API object does not exist yet, it is created and stored in the `apis` object.
-	 * @returns {ElectroluxApi} - The Electrolux API object for the device's configured account.
-	 */
 	getApi() {
 		const settings = this.getSettings();
 		let client = apis[settings.username];
 		if (!client) {
 			this.log("Creating new API object for account " + settings.username);
-			client = new ElectroluxApi();
-			client.setAuth(settings.username, settings.password);
-			client.lastPoll = 0;
-			client.failTime = 0;
+			client = {
+				api: new ElectroluxApi(this.log),
+				appliances: null,
+				failTime: 0,
+				lastPoll: 0	
+			} as ElectroluxApiClient;
+			client.api.setAuth(settings.username, settings.password);
 			apis[settings.username] = client;
 		}
 		return client;
@@ -198,7 +151,7 @@ class ElectroluxPureDevice extends Homey.Device {
 		try {
 			if (now - client.lastPoll > (POLL_INTERVAL * 0.5)) {
 				this.log("Will poll account " + settings.username + " for appliance status");
-				client.appliances = await client.getAppliances();
+				client.appliances = await client.api.getAppliances();
 			}
 		} catch (err) {
 			this.log("Error: " + err);
@@ -206,7 +159,7 @@ class ElectroluxPureDevice extends Homey.Device {
 			return;
 		}
 		if (client.appliances) {
-			let appliance = await client.getAppliance(deviceId);
+			let appliance = await client.api.getAppliance(deviceId);
 			if (!appliance) {
 				this.log("Device " + deviceId + " no longer found in account");
 				this.setUnavailable("Device no longer in account. Check the mobile app and verify that you use the correct account.");
@@ -217,11 +170,7 @@ class ElectroluxPureDevice extends Homey.Device {
 		}
 	}
 
-	/**
-	 * Updates the device with the given appliance data.
-	 * @param {Object} appliance - The appliance data to update the device with.
-	 */
-	async updateAppliance(appliance) {
+	async updateAppliance(appliance : any) {
 		if (!appliance || appliance.length === 0) {
 			this.log("No data received from device");
 			return;
@@ -268,35 +217,35 @@ class ElectroluxPureDevice extends Homey.Device {
 		this.setCapabilityValue('LOCK_onoff', props.SafetyLock);
 	}
 
-    flow_set_fan_speed(args, state) {
+	flow_set_fan_speed(args: { fan_speed: number }, state: {}) {
         return this.setDeviceOpts({ FAN_speed: args.fan_speed });
     }
 
-    flow_enable_smart_mode(args, state) {
+	flow_enable_smart_mode(args: {}, state: {}) {
         return this.setDeviceOpts({ SMART_mode: 'smart' });
     }
 
-    flow_enable_ionizer(args, state) {
+    flow_enable_ionizer(args: {}, state: {}) {
         return this.setDeviceOpts({ IONIZER_onoff: true });
     }
 
-    flow_disable_ionizer(args, state) {
+    flow_disable_ionizer(args: {}, state: {}) {
         return this.setDeviceOpts({ IONIZER_onoff: false });
     }
 
-    flow_enable_indicator_light(args, state) {
+    flow_enable_indicator_light(args: {}, state: {}) {
           return this.setDeviceOpts({ LIGHT_onoff: true });
     }
 
-    flow_disable_indicator_light(args, state) {
+    flow_disable_indicator_light(args: {}, state: {}) {
           return this.setDeviceOpts({ LIGHT_onoff: false });
     }
 
-    flow_enable_lock(args, state) {
+    flow_enable_lock(args: {}, state: {}) {
           return this.setDeviceOpts({ LOCK_onoff: true });
     }
 
-    flow_disable_lock(args, state) {
+    flow_disable_lock(args: {}, state: {}) {
           return this.setDeviceOpts({ LOCK_onoff: false });
     }
 }

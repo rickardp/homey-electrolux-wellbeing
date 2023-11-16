@@ -1,13 +1,10 @@
-'use strict';
-
-const Homey = require('homey');
+import Homey from 'homey';
 
 class ElectroluxPureApp extends Homey.App {
 	
-	onInit() {
+	async onInit() {
 		this.log('ElectroluxPureApp is running...');
 	}
 	
 }
-
-module.exports = ElectroluxPureApp;
+module.exports = ElectroluxPureApp
