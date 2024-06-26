@@ -1,0 +1,85 @@
+{
+    "id": "electrolux-pure-a9",
+    "name": {
+        "en": "Electrolux Pure A9"
+    },
+    "class": "fan",
+    "capabilities": [
+        "measure_co2",
+        "measure_humidity",
+        "measure_pm25",
+        "measure_pm10",
+        "measure_pm1",
+        "measure_temperature",
+        "measure_voc",
+        "onoff",
+        "SMART_mode",
+        "FAN_speed",
+        "IONIZER_onoff",
+        "LOCK_onoff",
+        "LIGHT_onoff",
+        "measure_FILTER"
+    ],
+    "images": {
+        "large": "/drivers/electrolux-pure-a9/assets/images/large.png",
+        "small": "/drivers/electrolux-pure-a9/assets/images/small.png"
+    },
+    "pair": [
+        {
+            "id": "login_electrolux_api",
+            "template": "login_credentials",
+            "navigation": {
+                "next": "list_pure_devices"
+            },
+            "options": {
+                "usernameLabel": {
+                    "en": "E-mail address"
+                },
+                "passwordLabel": {
+                    "en": "App password"
+                }
+            }
+        },
+        {
+            "id": "list_pure_devices",
+            "template": "list_devices",
+            "navigation": {
+                "next": "add_pure_devices"
+            }
+        },
+        {
+            "id": "add_pure_devices",
+            "template": "add_devices"
+        }
+    ],
+    "settings": [
+        {
+            "type": "group",
+            "label": {
+                "en": "App Authentication"
+            },
+            "children": [
+                {
+                    "id": "username",
+                    "type": "text",
+                    "label": {
+                        "en": "E-mail address"
+                    },
+                    "hint": {
+                        "en": "E-mail address used in mobile app"
+                    }
+                },
+                {
+                    "id": "password",
+                    "type": "text",
+                    "label": {
+                        "en": "Password"
+                    },
+                    "hint": {
+                        "en": "Password used in mobile app"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "title": {
+        "en": "Enable smart mode"
+    },
+    "titleFormatted": {
+        "en": "Enable smart mode"
+    },
+    "hint": {
+        "en": "Start the fan in smart mode (or switch to smart mode if running)"
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "title": {
+        "en": "Set fan speed"
+    },
+    "titleFormatted": {
+        "en": "Set fan speed to [[fan_speed]]%"
+    },
+    "hint": {
+        "en": "This action will set a fixed fan speed (and disable smart mode)"
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+        },
+        {
+            "name": "fan_speed",
+            "type": "number",
+            "min": 0,
+            "max": 100,
+            "title": {
+                "en": "Fan speed"
+            }
+        }
+    ]
+}

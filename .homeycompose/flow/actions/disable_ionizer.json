@@ -1,0 +1,18 @@
+{
+    "title": {
+        "en": "Disable ionizer"
+    },
+    "titleFormatted": {
+        "en": "Disable ionizer"
+    },
+    "hint": {
+        "en": "Disables the ionizer"
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+        }
+    ]
+}

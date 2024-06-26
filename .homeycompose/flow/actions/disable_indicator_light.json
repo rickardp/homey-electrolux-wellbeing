@@ -1,0 +1,15 @@
+{
+    "title": {
+        "en": "Disable indicator light"
+    },
+    "titleFormatted": {
+        "en": "Disable indicator light"
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+        }
+    ]
+}

@@ -12,7 +12,7 @@
     "install-app": "yarn build && cd .homeybuild && homey app install",
     "validate": "yarn build && cd .homeybuild && homey app validate",
     "publish": "yarn build && cd .homeybuild && homey app publish",
-    "build": "homey app build && cp env.json .homeybuild/ && cd .homeybuild && yarn workspaces focus --production",
+    "build": "echo '{}' > app.json && homey app build && cp env.json .homeybuild/ && cd .homeybuild && yarn workspaces focus --production",
     "validate-app": "homey app validate"
   },
   "repository": {
@@ -39,7 +39,7 @@
     "eslint": "^8.53.0",
     "eslint-config-athom": "^3.1.1",
     "eslint-plugin-prettier": "^5.0.1",
-    "homey": "^3.1.2",
+    "homey": "^3.4.0",
     "typescript": "^5.2.2"
   }
 }

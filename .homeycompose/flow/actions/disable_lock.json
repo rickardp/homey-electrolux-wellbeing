@@ -1,0 +1,15 @@
+{
+    "title": {
+        "en": "Disable lock control"
+    },
+    "titleFormatted": {
+        "en": "Disable lock control"
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+        }
+    ]
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/athombv/node-homey-lib/master/assets/app/schema.json",
+  "id": "com.electrolux.pure",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "name": {
+    "en": "Electrolux Wellbeing"
+  },
+  "homeyCommunityTopicId": 12718,
+  "description": {
+    "en": "Control Electrolux Wellbeing air purifiers"
+  },
+  "bugs": {
+    "url": "https://github.com/rickardp/homey-electrolux-wellbeing/issues/new/choose"
+  },
+  "contributing": {
+    "donate": {
+      "paypal": {
+        "username": "rickardly"
+      }
+    }
+  },
+  "brandColor": "#011e41",
+  "category": [
+    "climate",
+    "appliances"
+  ],
+  "permissions": [],
+  "author": {
+    "name": "Rickard",
+    "email": "athom@evolviq.com"
+  },
+  "images": {
+    "large": "/assets/images/large.png",
+    "small": "/assets/images/small.png"
+  }
+}

@@ -1,0 +1,15 @@
+{
+    "title": {
+        "en": "Enable indicator light"
+    },
+    "titleFormatted": {
+        "en": "Enable indicator light"
+    },
+    "args": [
+        {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=electrolux-pure-a9"
+        }
+    ]
+}

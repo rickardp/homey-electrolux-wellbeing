@@ -1,0 +1,23 @@
+{
+    "type": "enum",
+    "uiComponent": "picker",
+    "title": {
+        "en": "Mode"
+    },
+    "values": [
+        {
+            "id": "manual",
+            "title": {
+                "en": "Manual"
+            }
+        },
+        {
+            "id": "smart",
+            "title": {
+                "en": "Smart"
+            }
+        }
+    ],
+    "getable": true,
+    "setable": true
+}

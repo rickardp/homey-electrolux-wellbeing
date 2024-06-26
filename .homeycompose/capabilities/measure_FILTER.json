@@ -1,0 +1,39 @@
+{
+    "type": "number",
+    "title": {
+        "en": "Filter life"
+    },
+    "units": {
+        "en": "%"
+    },
+    "insights": true,
+    "min": 0,
+    "max": 100,
+    "desc": {
+        "en": "Filter life in percentage (%)"
+    },
+    "chartType": "spline",
+    "decimals": 2,
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "icon": "/assets/icons/measure_FILTER.svg",
+    "$flow": {
+        "triggers": [
+            {
+                "id": "measure_FILTER_changed",
+                "title": {
+                    "en": "The filter life changed"
+                },
+                "tokens": [
+                    {
+                        "name": "$id",
+                        "title": "$title",
+                        "type": "$type",
+                        "example": 99
+                    }
+                ]
+            }
+        ]
+    }
+}
