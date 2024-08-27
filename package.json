@@ -33,7 +33,7 @@
     "@types/node": "^20.9.1",
     "@types/node-fetch": "^2.6.9",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
-    "@typescript-eslint/parser": "^6.11.0",
+    "@typescript-eslint/parser": "^8.3.0",
     "@vercel/ncc": "^0.38.1",
     "athom-api": "^3.9.2",
     "eslint": "^8.53.0",
