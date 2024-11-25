@@ -1,5 +1,6 @@
 import Homey from 'homey';
 import fetch from 'node-fetch';
+import {GigyaAuthSession} from "./gigyaAuthSession";
 
 
 /**
@@ -14,86 +15,55 @@ export class AuthError extends Error {
     }
 }
 
-const BASE_URL = "https://api.ocp.electrolux.one/";
-const TOKEN_URL = BASE_URL + "one-account-authorization/api/v1/token";
-const AUTHENTICATION_URL = BASE_URL + "one-account-authentication/api/v1/authenticate";
-const API_URL = BASE_URL + "appliance/api/v2/appliances";
+const OCP_TOKEN_URL = "https://api.ocp.electrolux.one/one-account-authorization/api/v1/token";
+const API_URL =  "/appliance/api/v2/appliances";
 const CLIENT_ID = Homey.env.CLIENT_ID;
-const CLIENT_SECRET = Homey.env.CLIENT_SECRET
-const X_API_KEY = Homey.env.X_API_KEY;
+const X_API_KEY = Homey.env.ELECTROLUX_X_API_KEY;
 
 export class ElectroluxApi {
     log: (message: string) => void;
     auth_state = {
         accessToken: "",
-        idToken: "",
         exchangeToken: "",
         expiresAt: null as Date|null,
         username: "",
         password: "",
         countryCode: "",
-        failTime: null as number|null
+        failTime: null as number | null,
+        sessionToken: "",
+        sessionSecret: "",
     }
+    base_url = "";
+
     constructor(log: (message: string) => void) {
         this.log = log;
     }
 
-    async getAccessToken() {
-        const tokenResponse = await fetch(TOKEN_URL, {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                clientId: CLIENT_ID,
-                clientSecret: CLIENT_SECRET,
-                grantType: "client_credentials"
-            })
-        });
-
-        const tokenData = await tokenResponse.json();
-        if (!tokenData.accessToken) {
-            throw new AuthError("Error obtaining client token");
-        }
-
-        this.auth_state.accessToken = tokenData.accessToken;
-    }
-
     async authenticateUser() {
-        await this.getAccessToken();
-        const loginResponse = await fetch(AUTHENTICATION_URL, {
-            method: "POST",
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.auth_state.accessToken}`,
-                'x-api-key': X_API_KEY
-            },
-            body: JSON.stringify({
-                username: this.auth_state.username,
-                password: this.auth_state.password
-            })
-        });
-
-        const loginData = await loginResponse.json();
-        if (!loginData.idToken) {
-            throw new AuthError("Error obtaining user idToken");
-        }
-
-        this.auth_state.idToken = loginData.idToken;
-        this.auth_state.countryCode = loginData.countryCode;
+        let gigyaAuthSession = new GigyaAuthSession(this.log);
+        let token = await gigyaAuthSession.getToken(this.auth_state.username, this.auth_state.password);
+        this.base_url = gigyaAuthSession.getApiBaseUrlForUser() // e.g. https://api.eu.ocp.electrolux.one in europe
+        return token;
     }
 
     async exchangeToken() {
-        await this.authenticateUser();
-        const tokenExchangeResponse = await fetch(TOKEN_URL, {
+        // Before we can get a token from Electrolux' API, we need to get a token from their Gigya instance to talk with their API
+        let gigyaAuthJwtToken = await this.authenticateUser();
+
+        let body = JSON.stringify({
+            clientId: CLIENT_ID,
+            idToken: gigyaAuthJwtToken,
+            grantType: "urn:ietf:params:oauth:grant-type:token-exchange"
+        });
+        this.log(body)
+        const tokenExchangeResponse = await fetch(OCP_TOKEN_URL, {
             method: "POST",
             headers: { 
                 'Content-Type': 'application/json',
-                'Origin-Country-Code': this.auth_state.countryCode
+                'Origin-Country-Code': this.auth_state.countryCode,
+                'X-Api-Key': X_API_KEY
             },
-            body: JSON.stringify({
-                clientId: CLIENT_ID,
-                idToken: this.auth_state.idToken,
-                grantType: "urn:ietf:params:oauth:grant-type:token-exchange"
-            })
+            body: body
         });
 
         const exchangeData = await tokenExchangeResponse.json();
@@ -134,7 +104,7 @@ export class ElectroluxApi {
             options.body = JSON.stringify(body);
         }
         try {
-            const response = await fetch(API_URL + suffix, options);
+            const response = await fetch( this.base_url + API_URL + suffix, options);
             const responseBody = await response.text();
 
             if (!response.ok) {
