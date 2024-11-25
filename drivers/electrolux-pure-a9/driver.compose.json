@@ -28,9 +28,6 @@
         {
             "id": "login_electrolux_api",
             "template": "login_credentials",
-            "navigation": {
-                "next": "list_pure_devices"
-            },
             "options": {
                 "usernameLabel": {
                     "en": "E-mail address"
